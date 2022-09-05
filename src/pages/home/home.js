@@ -1,7 +1,9 @@
-import Connection from "../connection/connection";
+// import Connection from "../connection/connection";
+import Job from "../job/job";
 
 function Home() {
-  return <Connection></Connection>;
+  return <Job></Job>;
+  // <Connection></Connection>;
 }
 
 export default Home;

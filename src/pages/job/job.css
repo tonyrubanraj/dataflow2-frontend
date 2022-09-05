@@ -1,0 +1,82 @@
+.job-page {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+.job__form-container {
+  display: inline-block;
+  padding: 30px 40px;
+  background-color: #ffffff;
+  text-align: left;
+  border-radius: 5px;
+  width: 520px;
+}
+.job__form-container .job__form-header {
+  font-weight: bold;
+  font-size: 24px;
+  margin: 0 0 40px 0;
+}
+.job__form-container .form-select {
+  margin: 15px 0;
+}
+.job__form-container .job__form-columns {
+  /* margin: 10px 0; */
+  display: flex;
+}
+.job__form-container .job__form--source-tables,
+.job__form-container .job__form--destination-tables {
+  margin-top: 0;
+}
+.job__form-container .job__form--source-fields {
+  margin: 0;
+  width: calc(50% - 10px);
+}
+.job__form-container .job__form--destination-fields {
+  margin: 0 0 0 20px;
+  width: calc(50% - 10px);
+}
+.job__form-container .job__form__table-btns {
+  text-align: right;
+}
+.job__form-container .destination-table--error-msg,
+.job__form-container .source-table--error-msg {
+  color: red;
+  font-size: 12px;
+}
+.job__form-container .job__form__table-btns .fa-circle-plus {
+  height: 22px;
+  color: #f2782e;
+  cursor: pointer;
+}
+.job__form-container .job__form__table-btns .fa-circle-minus {
+  height: 22px;
+  margin-left: 10px;
+  color: #f2782e;
+  cursor: pointer;
+}
+.job__form-container .submit-btn {
+  background: #f2782e;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 25px;
+  margin: 25px 0 0;
+  font-size: 14px;
+  cursor: pointer;
+}
+.job__form-container .submit-btn.btn-invalid {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.job__form-container .job__form__error-msg {
+  margin-top: 10px;
+  color: red;
+  font-size: 12px;
+}
+.job__form-container .job__form__success-msg {
+  margin-top: 10px;
+  color: green;
+  font-size: 12px;
+}

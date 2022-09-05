@@ -4,7 +4,9 @@ function FormSelect(props) {
   return (
     <div
       id={props.selectId}
-      className={`form-input${props.errorText === "" ? "" : " invalid-input"}`}
+      className={`form-select${props.errorText === "" ? "" : " invalid-input"}${
+        props.selectClassName ? " " + props.selectClassName : ""
+      }`}
     >
       <label>{props.selectLabel}</label>
       <select value={props.selectValue} onChange={props.onSelectChange}>
