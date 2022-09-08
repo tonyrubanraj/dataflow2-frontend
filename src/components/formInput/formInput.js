@@ -1,3 +1,4 @@
+import { TextField } from "@mui/material";
 import "./formInput.css";
 
 function FormInput(props) {
@@ -6,15 +7,15 @@ function FormInput(props) {
       id={props.inputId}
       className={`form-input${props.errorText === "" ? "" : " invalid-input"}`}
     >
-      <label>{props.inputLabel}</label>
-      <input
+      <TextField
+        error={props.errorText ? true : false}
+        id="outlined-error"
+        label={props.inputLabel}
         type={props.inputType}
         name={props.inputName}
         value={props.inputValue}
         onChange={props.onInputChange}
-        placeholder={props.inputPlaceholder}
       />
-      {props.errorText && <span className="error-msg">{props.errorText}</span>}
     </div>
   );
 }

@@ -1,11 +1,26 @@
+import * as React from "react";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import FormSelect from "../../components/formSelect/formSelect";
+import Button from "@mui/material/Button";
+import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import "./job.css";
-import { faPlusCircle, faMinusCircle } from "@fortawesome/free-solid-svg-icons";
+import {
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
+import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMinusCircle, faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 
-function Job() {
+const theme = createTheme();
+
+export default function Job() {
   const [connectionId, setConnectionId] = useState(-1);
   const [sourceSchema, setSourceSchema] = useState("");
   const [destinationSchema, setDestinationSchema] = useState("");
@@ -295,198 +310,318 @@ function Job() {
   };
 
   return (
-    <div className="job-page">
-      <div className="job__form-container">
-        <div className="job__form-header">Data Transfer Job Settings</div>
-        <form className="job__form" onSubmit={handleSubmit}>
-          <FormSelect
-            selectId="connectionId"
-            selectLabel="Choose the Connection setting"
-            selectValue={connectionId}
-            onSelectChange={(e) => {
-              validateJobForm("connectionId", e.target.value);
-              setSourceSchema("");
-              setDestinationSchema("");
-              setConnectionId(e.target.value);
+    <ThemeProvider theme={theme}>
+      <Grid
+        container
+        component="main"
+        sx={{ height: "100vh" }}
+        justifyContent="center"
+      >
+        <Grid item xs={12} sm={6} md={6} component={Paper} elevation={6} square>
+          <Box
+            sx={{
+              my: 8,
+              mx: 8,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
             }}
-            errorText={errors.connectionId}
           >
-            <option value="-1">--Select--</option>
-            {connections.map(({ name, id }) => {
-              return (
-                <option key={id} value={id}>
-                  {name}
-                </option>
-              );
-            })}
-          </FormSelect>
-          <div className="job__form-columns">
-            <div className="job__form--source-fields">
-              <FormSelect
-                selectId="sourceSchema"
-                selectLabel="Choose the Source schema"
-                selectValue={sourceSchema}
-                onSelectChange={(e) => {
-                  validateJobForm("sourceSchema", e.target.value);
-                  setSourceSchema(e.target.value);
-                }}
-                errorText={errors.sourceSchema}
+            <Typography component="h1" variant="h5">
+              Data Transfer Job Settings
+            </Typography>
+            <Box
+              component="form"
+              noValidate={false}
+              onSubmit={handleSubmit}
+              sx={{ mt: 3, width: "100%" }}
+            >
+              <FormControl
+                fullWidth
+                error={errors.connectionId ? true : false}
+                sx={{ my: 2 }}
               >
-                <option value="">--Select--</option>
-                {sourceSchemas.map((schema) => {
-                  return (
-                    <option key={schema} value={schema}>
-                      {schema}
-                    </option>
-                  );
-                })}
-              </FormSelect>
-            </div>
-            <div className="job__form--destination-fields">
-              <FormSelect
-                selectId="destinationSchema"
-                selectLabel="Choose the Destination schema"
-                selectValue={destinationSchema}
-                onSelectChange={(e) => {
-                  validateJobForm("destinationSchema", e.target.value);
-                  setDestinationSchema(e.target.value);
-                }}
-                errorText={errors.destinationSchema}
-              >
-                <option value="">--Select--</option>
-                {destinationSchemas.map((schema) => {
-                  return (
-                    <option key={schema} value={schema}>
-                      {schema}
-                    </option>
-                  );
-                })}
-              </FormSelect>
-            </div>
-          </div>
+                <InputLabel id="connectionId">
+                  Choose the Connection setting
+                </InputLabel>
+                <Select
+                  labelId="connectionId"
+                  id="connectionId"
+                  fullWidth
+                  value={connectionId}
+                  label="Choose the Connection setting"
+                  onChange={(e) => {
+                    validateJobForm("connectionId", e.target.value);
+                    setSourceSchema("");
+                    setDestinationSchema("");
+                    setConnectionId(e.target.value);
+                  }}
+                >
+                  <MenuItem value="-1" selected>
+                    --Select--
+                  </MenuItem>
+                  {connections.map(({ name, id }) => {
+                    return (
+                      <MenuItem key={id} value={id}>
+                        {name}
+                      </MenuItem>
+                    );
+                  })}
+                </Select>
+              </FormControl>
+              <Grid xs={12} sm={12} md={12}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Grid xs={12} sm={5.5} md={5.5}>
+                    <FormControl
+                      fullWidth
+                      error={errors.sourceSchema ? true : false}
+                      sx={{ my: 2 }}
+                    >
+                      <InputLabel id="sourceSchema">
+                        Choose the Source schema
+                      </InputLabel>
+                      <Select
+                        labelId="sourceSchema"
+                        id="sourceSchema"
+                        fullWidth
+                        value={sourceSchema}
+                        label="Choose the Source schema"
+                        onChange={(e) => {
+                          validateJobForm("sourceSchema", e.target.value);
+                          setSourceSchema(e.target.value);
+                        }}
+                      >
+                        <MenuItem value="">--Select--</MenuItem>
+                        {sourceSchemas.map((schema) => {
+                          return (
+                            <MenuItem key={schema} value={schema}>
+                              {schema}
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                    </FormControl>
+                  </Grid>
 
-          <div className="job__form-columns">
-            <div className="job__form--source-fields">
-              Source tables
-              {sourceTables.map((input) => (
-                <FormSelect
-                  key={input.id}
-                  selectClassName="job__form--source-tables"
-                  selectId={`sourceTable-${input.id}`}
-                  selectValue={input.value}
-                  onSelectChange={(e) => {
-                    validateJobForm("sourceTables", e.target.value);
-                    setSourceTables(
-                      sourceTables.map((table) => {
-                        if (table.id === input.id) {
-                          table.value = e.target.value;
-                        }
-                        return table;
-                      })
-                    );
+                  <Grid xs={12} sm={5.5} md={5.5}>
+                    <FormControl
+                      fullWidth
+                      error={errors.destinationSchema ? true : false}
+                      sx={{ my: 2 }}
+                    >
+                      <InputLabel id="destinationSchema">
+                        Choose the Destination schema
+                      </InputLabel>
+                      <Select
+                        labelId="destinationSchema"
+                        id="destinationSchema"
+                        fullWidth
+                        value={destinationSchema}
+                        label="Choose the Destination schema"
+                        onChange={(e) => {
+                          validateJobForm("destinationSchema", e.target.value);
+                          setDestinationSchema(e.target.value);
+                        }}
+                      >
+                        <MenuItem value="">--Select--</MenuItem>
+                        {destinationSchemas.map((schema) => {
+                          return (
+                            <MenuItem key={schema} value={schema}>
+                              {schema}
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                </Box>
+              </Grid>
+
+              <Grid xs={12} sm={12} md={12}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
                   }}
                 >
-                  <option value="">--Select--</option>
-                  {sourceTablesList.map((table) => {
-                    return (
-                      <option key={table} value={table}>
-                        {table}
-                      </option>
-                    );
-                  })}
-                </FormSelect>
-              ))}
-              <div
-                className={`source-table--error-msg${
-                  errors.sourceTables === "" ? " hide" : ""
-                }`}
+                  <Grid xs={12} sm={5.5} md={5.5}>
+                    {sourceTables.map((input) => (
+                      <FormControl key={input.id} fullWidth sx={{ my: 1 }}>
+                        <InputLabel id={`sourceTable-${input.id}`}>
+                          Choose the Source table
+                        </InputLabel>
+                        <Select
+                          labelId={`sourceTable-${input.id}`}
+                          id={`sourceTable-${input.id}`}
+                          fullWidth
+                          value={input.value}
+                          label="Choose the Source table"
+                          onChange={(e) => {
+                            validateJobForm("sourceTables", e.target.value);
+                            setSourceTables(
+                              sourceTables.map((table) => {
+                                if (table.id === input.id) {
+                                  table.value = e.target.value;
+                                }
+                                return table;
+                              })
+                            );
+                          }}
+                        >
+                          <MenuItem value="">--Select--</MenuItem>
+                          {sourceTablesList.map((table) => {
+                            return (
+                              <MenuItem key={table} value={table}>
+                                {table}
+                              </MenuItem>
+                            );
+                          })}
+                        </Select>
+                      </FormControl>
+                    ))}
+                    <div
+                      className={`source-table--error-msg${
+                        errors.sourceTables === "" ? " hide" : ""
+                      }`}
+                    >
+                      {errors.sourceTables}
+                    </div>
+                  </Grid>
+                  <Grid xs={12} sm={5.5} md={5.5}>
+                    {destinationTables.map((input) => (
+                      <FormControl key={input.id} fullWidth sx={{ my: 1 }}>
+                        <InputLabel id={`destinationTable-${input.id}`}>
+                          Choose the Destination table
+                        </InputLabel>
+                        <Select
+                          labelId={`destinationTable-${input.id}`}
+                          id={`destinationTable-${input.id}`}
+                          fullWidth
+                          value={input.value}
+                          label="Choose the Destination table"
+                          onChange={(e) => {
+                            validateJobForm(
+                              "destinationTables",
+                              e.target.value
+                            );
+                            setDestinationTables(
+                              destinationTables.map((table) => {
+                                if (table.id === input.id) {
+                                  table.value = e.target.value;
+                                }
+                                return table;
+                              })
+                            );
+                          }}
+                        >
+                          <MenuItem value="">--Select--</MenuItem>
+                          {destinationTablesList.map((table) => {
+                            return (
+                              <MenuItem key={table} value={table}>
+                                {table}
+                              </MenuItem>
+                            );
+                          })}
+                        </Select>
+                      </FormControl>
+                    ))}
+                    <div
+                      className={`destination-table--error-msg${
+                        errors.destinationTables === "" ? " hide" : ""
+                      }`}
+                    >
+                      {errors.destinationTables}
+                    </div>
+                  </Grid>
+                </Box>
+              </Grid>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                }}
               >
-                {errors.sourceTables}
-              </div>
-            </div>
-            <div className="job__form--destination-fields">
-              Destination tables
-              {destinationTables.map((input) => (
-                <FormSelect
-                  key={input.id}
-                  selectClassName="job__form--destination-tables"
-                  selectId={`destinationTable-${input.id}`}
-                  selectValue={input.value}
-                  onSelectChange={(e) => {
-                    validateJobForm("destinationTables", e.target.value);
-                    setDestinationTables(
-                      destinationTables.map((table) => {
-                        if (table.id === input.id) {
-                          table.value = e.target.value;
-                        }
-                        return table;
-                      })
-                    );
+                <div className="job__form__table-btns">
+                  <IconButton aria-label="Add">
+                    <FontAwesomeIcon
+                      onClick={addTableField}
+                      icon={faPlusCircle}
+                    />
+                  </IconButton>
+                  <IconButton aria-label="Remove">
+                    <FontAwesomeIcon
+                      className={`${sourceTables.length > 1 ? "" : " hide"}`}
+                      onClick={removeTableField}
+                      icon={faMinusCircle}
+                    />
+                  </IconButton>
+                </div>
+              </Box>
+
+              <FormControl
+                fullWidth
+                error={errors.jobType ? true : false}
+                sx={{ my: 2 }}
+              >
+                <InputLabel id="jobType">Choose the Job Type</InputLabel>
+                <Select
+                  labelId="jobType"
+                  id="jobType"
+                  fullWidth
+                  value={jobType}
+                  label="Choose the Job Type"
+                  onChange={(e) => {
+                    validateJobForm("jobType", e.target.value);
+                    setJobType(e.target.value);
                   }}
                 >
-                  <option value="">--Select--</option>
-                  {destinationTablesList.map((table) => {
-                    return (
-                      <option key={table} value={table}>
-                        {table}
-                      </option>
-                    );
-                  })}
-                </FormSelect>
-              ))}
-              <div
-                className={`destination-table--error-msg${
-                  errors.destinationTables === "" ? " hide" : ""
-                }`}
+                  <MenuItem value="">--Select--</MenuItem>
+                  <MenuItem value="bulk">Bulk</MenuItem>
+                  <MenuItem value="cdc">CDC</MenuItem>
+                </Select>
+              </FormControl>
+              <Button
+                type="submit"
+                disabled={isValidForm ? false : true}
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2, py: 1.5 }}
               >
-                {errors.destinationTables}
-              </div>
-            </div>
-          </div>
-          <div className="job__form__table-btns">
-            <FontAwesomeIcon onClick={addTableField} icon={faPlusCircle} />
-            <FontAwesomeIcon
-              className={`${sourceTables.length > 1 ? "" : " hide"}`}
-              onClick={removeTableField}
-              icon={faMinusCircle}
-            />
-          </div>
-          <FormSelect
-            selectId="jobType"
-            selectLabel="Choose the Job type"
-            selectValue={jobType}
-            onSelectChange={(e) => {
-              validateJobForm("jobType", e.target.value);
-              setJobType(e.target.value);
-            }}
-            errorText={errors.jobType}
-          >
-            <option value="">--Select--</option>
-            <option value="bulk">Bulk</option>
-            <option value="cdc">CDC</option>
-          </FormSelect>
-          <input
-            className={`submit-btn${isValidForm ? "" : " btn-invalid"}`}
-            type="submit"
-            value="Execute Job"
-          />
-          <div
-            className={`job__form__error-msg${formStatus !== 2 ? " hide" : ""}`}
-          >
-            Error in initiating the data migration job. Please check your
-            settings again.
-          </div>
-          <div
-            className={`job__form__success-msg${
-              formStatus !== 1 ? " hide" : ""
-            }`}
-          >
-            Successfully initiated data migration job.
-          </div>
-        </form>
-      </div>
-    </div>
+                Execute Job
+              </Button>
+              <Grid container>
+                <Grid item>
+                  <div
+                    className={`job__form__error-msg${
+                      formStatus !== 2 ? " hide" : ""
+                    }`}
+                  >
+                    Error in initiating the data migration job. Please check
+                    your settings again.
+                  </div>
+                  <div
+                    className={`job__form__success-msg${
+                      formStatus !== 1 ? " hide" : ""
+                    }`}
+                  >
+                    Successfully initiated data migration job.
+                  </div>
+                </Grid>
+              </Grid>
+            </Box>
+          </Box>
+        </Grid>
+      </Grid>
+    </ThemeProvider>
   );
 }
-
-export default Job;

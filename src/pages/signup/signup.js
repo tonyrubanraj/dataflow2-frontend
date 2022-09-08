@@ -1,10 +1,21 @@
+import * as React from "react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import FormInput from "../../components/formInput/formInput";
-import "./signup.css";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import Link from "@mui/material/Link";
+import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-function Signup() {
+const theme = createTheme();
+
+export default function Signup() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -127,82 +138,129 @@ function Signup() {
   };
 
   return (
-    <div className="signup-page">
-      <div className="signup__form-container">
-        <div className="signup__form-header">
-          Sign up to create a <span className="text--primary">DataFlow</span>{" "}
-          account
-        </div>
-        <form className="signup__form" onSubmit={handleSubmit}>
-          <div className="signup__form-top">
-            <FormInput
-              inputPlaceholder="First Name"
-              inputId="firstName"
-              inputLabel="First Name"
-              inputType="text"
-              inputName="firstName"
-              inputValue={firstName}
-              onInputChange={(e) => {
-                validateSignupForm("firstName", e.target.value);
-                setFirstName(e.target.value);
-              }}
-              errorText={errors.firstName}
-            />
-            <FormInput
-              inputId="lastName"
-              inputPlaceholder="Last Name"
-              inputLabel="Last Name"
-              inputType="text"
-              inputName="lastName"
-              inputValue={lastName}
-              onInputChange={(e) => {
-                validateSignupForm("lastName", e.target.value);
-                setLastName(e.target.value);
-              }}
-              errorText={errors.lastName}
-            />
-          </div>
-          <FormInput
-            inputId="email"
-            inputPlaceholder="Email"
-            inputLabel="Email"
-            inputType="text"
-            inputName="email"
-            inputValue={email}
-            onInputChange={(e) => {
-              validateSignupForm("email", e.target.value);
-              setEmail(e.target.value);
+    <ThemeProvider theme={theme}>
+      <Grid container component="main" sx={{ height: "100vh" }}>
+        <CssBaseline />
+        <Grid
+          item
+          xs={false}
+          sm={4}
+          md={8}
+          sx={{
+            backgroundImage: "url(https://source.unsplash.com/random)",
+            backgroundRepeat: "no-repeat",
+            backgroundColor: (t) =>
+              t.palette.mode === "light"
+                ? t.palette.grey[50]
+                : t.palette.grey[900],
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        />
+        <Grid item xs={12} sm={8} md={4} component={Paper} elevation={6} square>
+          <Box
+            sx={{
+              my: 8,
+              mx: 8,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
             }}
-            errorText={errors.email}
-          />
-          <FormInput
-            inputId="password"
-            inputPlaceholder="Password"
-            inputLabel="Password"
-            inputType="password"
-            inputName="password"
-            inputValue={password}
-            onInputChange={(e) => {
-              validateSignupForm("password", e.target.value);
-              setPassword(e.target.value);
-            }}
-            errorText={errors.password}
-          />
-          <input
-            className={`submit-btn${isValidForm ? "" : " btn-invalid"}`}
-            type="submit"
-            value="Create Account"
-          />
-        </form>
-        <div className="signup__form-footer">
-          Already have an existing account?{" "}
-          <Link to="/login">
-            <span className="text--primary">Log In</span>
-          </Link>
-        </div>
-      </div>
-    </div>
+          >
+            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Sign up
+            </Typography>
+            <Box
+              component="form"
+              noValidate={false}
+              onSubmit={handleSubmit}
+              sx={{ mt: 1 }}
+            >
+              <TextField
+                margin="normal"
+                helperText={errors.firstName}
+                error={errors.firstName ? true : false}
+                required
+                fullWidth
+                id="firstName"
+                label="First Name"
+                name="firstName"
+                autoFocus
+                value={firstName}
+                onChange={(e) => {
+                  validateSignupForm("firstName", e.target.value);
+                  setFirstName(e.target.value);
+                }}
+              />
+              <TextField
+                margin="normal"
+                helperText={errors.lastName}
+                error={errors.lastName ? true : false}
+                required
+                fullWidth
+                id="lastName"
+                label="Last Name"
+                name="lastName"
+                value={lastName}
+                onChange={(e) => {
+                  validateSignupForm("lastName", e.target.value);
+                  setLastName(e.target.value);
+                }}
+              />
+              <TextField
+                margin="normal"
+                helperText={errors.email}
+                error={errors.email ? true : false}
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                value={email}
+                onChange={(e) => {
+                  validateSignupForm("email", e.target.value);
+                  setEmail(e.target.value);
+                }}
+              />
+              <TextField
+                margin="normal"
+                helperText={errors.password}
+                error={errors.password ? true : false}
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => {
+                  validateSignupForm("password", e.target.value);
+                  setPassword(e.target.value);
+                }}
+              />
+              <Button
+                type="submit"
+                disabled={isValidForm ? false : true}
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2, py: 1.5 }}
+              >
+                Sign up
+              </Button>
+              <Grid container>
+                <Grid item>
+                  <Link href="/login" variant="body2">
+                    {"Already have an account? Login"}
+                  </Link>
+                </Grid>
+              </Grid>
+            </Box>
+          </Box>
+        </Grid>
+      </Grid>
+    </ThemeProvider>
   );
 }
-
-export default Signup;

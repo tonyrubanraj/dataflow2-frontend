@@ -1,9 +1,19 @@
+import * as React from "react";
 import { useEffect, useState } from "react";
-import FormInput from "../../components/formInput/formInput";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import ConnectionContainer from "../../containers/connectionContainer/connectionContainer";
 import "./connection.css";
 
-function Connection() {
+const theme = createTheme();
+
+export default function Connection() {
   const [connectionName, setConnectionName] = useState("");
   const [isConnectionValid, setIsConnectionValid] = useState(false);
   const [formStatus, setFormStatus] = useState(false);
@@ -70,65 +80,119 @@ function Connection() {
   };
 
   return (
-    <div className="connection-page">
-      <div className="container-page__header__wrapper">
-        <div className="container-page__header">
-          <form className="connection-params__form" onSubmit={handleSubmit}>
-            <div className="connection-params__form--left">
-              <FormInput
-                inputId="connectionName"
-                inputPlaceholder="Connection Name"
-                inputLabel="Connection Name"
-                inputType="text"
-                inputName="connectionName"
-                inputValue={connectionName}
-                onInputChange={(e) => {
+    <ThemeProvider theme={theme}>
+      <Grid container component="main" sx={{ height: "100vh" }}>
+        <CssBaseline />
+        <Grid item xs={12} sm={12} md={12} alignItems="left">
+          <Grid item xs={12} sm={6} md={6}>
+            <Box
+              sx={{
+                my: 8,
+                ml: 21,
+                display: "flex",
+                alignItems: "flex-start",
+                justifyContent: "flex-start",
+              }}
+            >
+              <TextField
+                margin="none"
+                helperText={errorText}
+                error={errorText ? true : false}
+                required
+                fullWidth
+                size="small"
+                name="connectionName"
+                label="Connection Name"
+                id="connectionName"
+                onChange={(e) => {
                   setConnectionName(e.target.value);
                   if (e.target.value.length === 0)
                     setErrorText("Connection name cannot be empty");
                   else setErrorText("");
                 }}
-                errorText={errorText}
               />
-            </div>
-            <div className="connection-params__form--right">
-              <input
-                className={`submit-btn${
-                  isConnectionValid ? "" : " btn-invalid"
-                }`}
-                type="submit"
-                value="Create Connection"
-              />
-              <div
-                className={`connection-params__form__success-msg${
-                  !formStatus ? " hide" : ""
-                }`}
-              >
-                Successfully created connection record
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-      <div className="connection-container">
-        <ConnectionContainer
-          type="source"
-          connectionParams={sourceConnection}
-          onFieldChange={onSourceFieldChange}
-          formValidity={isSourceFormValid}
-          onFormUpdate={setIsSourceFormValid}
-        ></ConnectionContainer>
-        <div className="vertical-divider"></div>
-        <ConnectionContainer
-          type="destination"
-          connectionParams={destinationConnection}
-          onFieldChange={onDestinationFieldChange}
-          formValidity={isDestinationFormValid}
-          onFormUpdate={setIsDestinationFormValid}
-        ></ConnectionContainer>
-      </div>
-    </div>
+              <Grid container>
+                <Grid item sx={{ mt: 0.25, mb: 2, ml: 3 }}>
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={isConnectionValid ? false : true}
+                    fullWidth
+                    variant="contained"
+                  >
+                    Create Connection
+                  </Button>
+                </Grid>
+                <Grid item sx={{ mt: 0.25, mb: 2, ml: 3 }}>
+                  <div
+                    className={`connection-params__form__success-msg${
+                      !formStatus ? " hide" : ""
+                    }`}
+                  >
+                    Successfully created connection record
+                  </div>
+                </Grid>
+              </Grid>
+            </Box>
+          </Grid>
+        </Grid>
+        <Grid
+          item
+          xs={12}
+          sm={12}
+          md={12}
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-evenly",
+          }}
+        >
+          <Grid item xs={12} sm={4} md={4} component={Paper}>
+            <Box
+              sx={{
+                my: 8,
+                mx: 8,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <Typography component="h1" variant="h5">
+                Source connection
+              </Typography>
+              <ConnectionContainer
+                type="source"
+                connectionParams={sourceConnection}
+                onFieldChange={onSourceFieldChange}
+                formValidity={isSourceFormValid}
+                onFormUpdate={setIsSourceFormValid}
+              ></ConnectionContainer>
+            </Box>
+          </Grid>
+          {/* <Divider orientation="vertical" flexItem></Divider> */}
+          <Grid item xs={12} sm={4} md={4} component={Paper}>
+            <Box
+              sx={{
+                my: 8,
+                mx: 8,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <Typography component="h1" variant="h5">
+                Destination connection
+              </Typography>
+              <ConnectionContainer
+                type="destination"
+                connectionParams={destinationConnection}
+                onFieldChange={onDestinationFieldChange}
+                formValidity={isDestinationFormValid}
+                onFormUpdate={setIsDestinationFormValid}
+              ></ConnectionContainer>
+            </Box>
+          </Grid>
+        </Grid>
+      </Grid>
+    </ThemeProvider>
   );
 }
-
-export default Connection;

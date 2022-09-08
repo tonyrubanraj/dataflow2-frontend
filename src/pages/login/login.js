@@ -1,16 +1,29 @@
+import * as React from "react";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import FormInput from "../../components/formInput/formInput";
+import { useNavigate } from "react-router-dom";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import Link from "@mui/material/Link";
+import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import "./login.css";
 
-function Login() {
+const theme = createTheme();
+
+export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isValidForm, setIsValidForm] = useState(false);
   const [isValidCredential, setIsValidCredential] = useState(true);
   const [errors, setErrors] = useState({
-    email: "",
-    password: "",
+    email: false,
+    password: false,
   });
 
   const navigate = useNavigate();
@@ -25,12 +38,12 @@ function Login() {
         ) {
           setErrors({
             ...errors,
-            email: "Invalid email address",
+            email: true,
           });
         } else {
           setErrors({
             ...errors,
-            email: "",
+            email: false,
           });
         }
         break;
@@ -38,12 +51,12 @@ function Login() {
         if (value.length === 0) {
           setErrors({
             ...errors,
-            password: "Password cannot be empty",
+            password: true,
           });
         } else {
           setErrors({
             ...errors,
-            password: "",
+            password: false,
           });
         }
         break;
@@ -51,13 +64,12 @@ function Login() {
         break;
     }
   };
-
   useEffect(() => {
     let flag = true;
     setIsValidCredential(true);
     if (email && password) {
       for (let key in errors) {
-        if (errors[key] !== "") {
+        if (errors[key]) {
           flag = false;
           break;
         }
@@ -68,7 +80,7 @@ function Login() {
     }
   }, [errors, email, password]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (event) => {
     const user = {
       email: email,
       password: password,
@@ -90,64 +102,112 @@ function Login() {
         }
       });
     }
-    e.preventDefault();
+    event.preventDefault();
   };
 
   return (
-    <div className="login-page">
-      <div className="login__form-container">
-        <div className="login__form-header">
-          <span className="text--primary">DataFlow</span> Member Login
-        </div>
-        <form className="login__form" onSubmit={handleSubmit}>
-          <FormInput
-            inputId="email"
-            inputPlaceholder="Email"
-            inputLabel="Email"
-            inputType="text"
-            inputName="email"
-            inputValue={email}
-            onInputChange={(e) => {
-              validateLoginForm("email", e.target.value);
-              setEmail(e.target.value);
+    <ThemeProvider theme={theme}>
+      <Grid container component="main" sx={{ height: "100vh" }}>
+        <CssBaseline />
+        <Grid
+          item
+          xs={false}
+          sm={4}
+          md={8}
+          sx={{
+            backgroundImage: "url(https://source.unsplash.com/random)",
+            backgroundRepeat: "no-repeat",
+            backgroundColor: (t) =>
+              t.palette.mode === "light"
+                ? t.palette.grey[50]
+                : t.palette.grey[900],
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        />
+        <Grid item xs={12} sm={8} md={4} component={Paper} elevation={6} square>
+          <Box
+            sx={{
+              my: 8,
+              mx: 8,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
             }}
-            errorText={errors.email}
-          />
-          <FormInput
-            inputId="password"
-            inputPlaceholder="Password"
-            inputLabel="Password"
-            inputType="password"
-            inputName="password"
-            inputValue={password}
-            onInputChange={(e) => {
-              validateLoginForm("password", e.target.value);
-              setPassword(e.target.value);
-            }}
-            errorText={errors.password}
-          />
-          <input
-            className={`submit-btn${isValidForm ? "" : " btn-invalid"}`}
-            type="submit"
-            value="Login"
-          />
-          <div
-            className={`login-form__error-msg${
-              isValidCredential ? " hide" : ""
-            }`}
           >
-            Your email or password is incorrect. Please try again
-          </div>
-        </form>
-        <div className="login__form-footer">
-          Not have an existing account?{" "}
-          <Link to="/signup">
-            <span className="text--primary">Sign up</span>
-          </Link>
-        </div>
-      </div>
-    </div>
+            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Login
+            </Typography>
+            <Box
+              component="form"
+              noValidate={false}
+              onSubmit={handleSubmit}
+              sx={{ mt: 1 }}
+            >
+              <TextField
+                margin="normal"
+                error={errors.email ? true : false}
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                value={email}
+                autoFocus
+                onChange={(e) => {
+                  validateLoginForm("email", e.target.value);
+                  setEmail(e.target.value);
+                }}
+              />
+              <TextField
+                margin="normal"
+                error={errors.password ? true : false}
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => {
+                  validateLoginForm("password", e.target.value);
+                  setPassword(e.target.value);
+                }}
+              />
+              <Button
+                type="submit"
+                disabled={isValidForm ? false : true}
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2, py: 1.5 }}
+              >
+                Login
+              </Button>
+              <Grid container>
+                <Grid item sx={{ mb: 2 }}>
+                  <div
+                    className={`login-form__error-msg${
+                      isValidCredential ? " hide" : ""
+                    }`}
+                  >
+                    Your email or password is incorrect. Please try again
+                  </div>
+                </Grid>
+              </Grid>
+              <Grid container>
+                <Grid item>
+                  <Link href="/signup" variant="body2">
+                    {"Don't have an account? Sign Up"}
+                  </Link>
+                </Grid>
+              </Grid>
+            </Box>
+          </Box>
+        </Grid>
+      </Grid>
+    </ThemeProvider>
   );
 }
-
-export default Login;
