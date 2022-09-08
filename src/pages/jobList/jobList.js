@@ -11,7 +11,6 @@ function JobList() {
         withCredentials: true,
       })
       .then((response) => {
-        console.log(response.data);
         setJobs(response.data);
       });
   }, []);

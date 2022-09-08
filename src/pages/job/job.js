@@ -369,7 +369,7 @@ export default function Job() {
                   })}
                 </Select>
               </FormControl>
-              <Grid xs={12} sm={12} md={12}>
+              <Grid item xs={12} sm={12} md={12}>
                 <Box
                   sx={{
                     display: "flex",
@@ -378,7 +378,7 @@ export default function Job() {
                     justifyContent: "space-between",
                   }}
                 >
-                  <Grid xs={12} sm={5.5} md={5.5}>
+                  <Grid item xs={12} sm={5.5} md={5.5}>
                     <FormControl
                       fullWidth
                       error={errors.sourceSchema ? true : false}
@@ -410,7 +410,7 @@ export default function Job() {
                     </FormControl>
                   </Grid>
 
-                  <Grid xs={12} sm={5.5} md={5.5}>
+                  <Grid item xs={12} sm={5.5} md={5.5}>
                     <FormControl
                       fullWidth
                       error={errors.destinationSchema ? true : false}
@@ -444,7 +444,7 @@ export default function Job() {
                 </Box>
               </Grid>
 
-              <Grid xs={12} sm={12} md={12}>
+              <Grid item xs={12} sm={12} md={12}>
                 <Box
                   sx={{
                     display: "flex",
@@ -453,7 +453,7 @@ export default function Job() {
                     justifyContent: "space-between",
                   }}
                 >
-                  <Grid xs={12} sm={5.5} md={5.5}>
+                  <Grid item xs={12} sm={5.5} md={5.5}>
                     {sourceTables.map((input) => (
                       <FormControl key={input.id} fullWidth sx={{ my: 1 }}>
                         <InputLabel id={`sourceTable-${input.id}`}>
@@ -496,7 +496,7 @@ export default function Job() {
                       {errors.sourceTables}
                     </div>
                   </Grid>
-                  <Grid xs={12} sm={5.5} md={5.5}>
+                  <Grid item xs={12} sm={5.5} md={5.5}>
                     {destinationTables.map((input) => (
                       <FormControl key={input.id} fullWidth sx={{ my: 1 }}>
                         <InputLabel id={`destinationTable-${input.id}`}>
@@ -552,16 +552,12 @@ export default function Job() {
                 }}
               >
                 <div className="job__form__table-btns">
-                  <IconButton aria-label="Add">
-                    <FontAwesomeIcon
-                      onClick={addTableField}
-                      icon={faPlusCircle}
-                    />
+                  <IconButton aria-label="Add" onClick={addTableField}>
+                    <FontAwesomeIcon icon={faPlusCircle} />
                   </IconButton>
-                  <IconButton aria-label="Remove">
+                  <IconButton aria-label="Remove" onClick={removeTableField}>
                     <FontAwesomeIcon
                       className={`${sourceTables.length > 1 ? "" : " hide"}`}
-                      onClick={removeTableField}
                       icon={faMinusCircle}
                     />
                   </IconButton>
