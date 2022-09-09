@@ -1,17 +1,17 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
-import EnhancedTable from "../../components/table/table";
+import EnhancedTable from "../../components/enhancedTable/enhancedTable";
+import { getJobs } from "../../services/jobServices";
 
 function JobList() {
   const [jobs, setJobs] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/job/list", {
-        withCredentials: true,
-      })
+    getJobs()
       .then((response) => {
         setJobs(response.data);
+      })
+      .catch(() => {
+        setJobs([]);
       });
   }, []);
 

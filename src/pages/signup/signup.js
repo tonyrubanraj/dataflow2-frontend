@@ -12,6 +12,7 @@ import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { createUser } from "../../services/userServices";
 
 const theme = createTheme();
 
@@ -116,23 +117,18 @@ export default function Signup() {
       password: password,
     };
     if (isValidForm) {
-      fetch("http://localhost:8080/signup", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
-      }).then((response) => {
-        if (response.status === 201) {
+      createUser(user)
+        .then((response) => {
           navigate("/");
-        } else if (response.status === 409) {
-          setErrors({
-            ...errors,
-            email: "User already exists with the same email address",
-          });
-        }
-      });
+        })
+        .catch((error) => {
+          if (error.response.status === 409) {
+            setErrors({
+              ...errors,
+              email: "User already exists with the same email address",
+            });
+          }
+        });
     }
     e.preventDefault();
   };

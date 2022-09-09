@@ -6,6 +6,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import "./connectionContainer.css";
+import { testConnection } from "../../services/connectionServices";
 
 export default function ConnectionContainer(props) {
   let connectionParams = props.connectionParams;
@@ -105,20 +106,13 @@ export default function ConnectionContainer(props) {
       password: connectionParams.password,
     };
     if (props.formValidity) {
-      fetch("http://localhost:8080/connection/test", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(connection_settings),
-      }).then((response) => {
-        if (response.status === 200) {
+      testConnection(connection_settings)
+        .then((response) => {
           setFormStatus(1);
-        } else {
+        })
+        .catch(() => {
           setFormStatus(2);
-        }
-      });
+        });
     }
     e.preventDefault();
   };

@@ -14,9 +14,16 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinusCircle, faPlusCircle } from "@fortawesome/free-solid-svg-icons";
+import {
+  getConnections,
+  getDestinationSchemas,
+  getDestinationTables,
+  getSourceSchemas,
+  getSourceTables,
+  migrate,
+} from "../../services/jobServices";
 
 const theme = createTheme();
 
@@ -83,58 +90,40 @@ export default function Job() {
   };
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/connection/list", {
-        withCredentials: true,
-      })
-      .then((res) => setConnections(res.data));
+    getConnections().then((res) => setConnections(res.data));
   }, []);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/connection/source/schemas", {
-        withCredentials: true,
-        params: {
-          connectionId: connectionId,
-        },
-      })
+    getSourceSchemas(connectionId)
       .then((response) => {
         setSourceSchemas(response.data);
-      });
-    axios
-      .get("http://localhost:8080/connection/destination/schemas", {
-        withCredentials: true,
-        params: {
-          connectionId: connectionId,
-        },
       })
+      .catch(() => {
+        setSourceSchemas([]);
+      });
+    getDestinationSchemas(connectionId)
       .then((response) => {
         setDestinationSchemas(response.data);
+      })
+      .catch(() => {
+        setDestinationSchemas([]);
       });
   }, [connectionId]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/connection/source/tables", {
-        withCredentials: true,
-        params: {
-          connectionId: connectionId,
-          schema: sourceSchema,
-        },
-      })
+    getSourceTables(connectionId, sourceSchema)
       .then((response) => {
         setSourceTablesList(response.data);
-      });
-    axios
-      .get("http://localhost:8080/connection/destination/tables", {
-        withCredentials: true,
-        params: {
-          connectionId: connectionId,
-          schema: destinationSchema,
-        },
       })
+      .catch(() => {
+        setSourceTablesList([]);
+      });
+    getDestinationTables(connectionId, destinationSchema)
       .then((response) => {
         setDestinationTablesList(response.data);
+      })
+      .catch(() => {
+        setDestinationTablesList([]);
       });
   }, [connectionId, sourceSchema, destinationSchema]);
 
@@ -291,20 +280,13 @@ export default function Job() {
       jobType: jobType,
     };
     if (isValidForm) {
-      fetch("http://localhost:8080/job/migrate", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(job_settings),
-      }).then((response) => {
-        if (response.status === 200) {
+      migrate(job_settings)
+        .then((response) => {
           setFormStatus(1);
-        } else {
+        })
+        .catch(() => {
           setFormStatus(2);
-        }
-      });
+        });
     }
     e.preventDefault();
   };

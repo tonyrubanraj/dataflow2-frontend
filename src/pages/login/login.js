@@ -12,6 +12,7 @@ import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { authenticateUser } from "../../services/userServices";
 import "./login.css";
 
 const theme = createTheme();
@@ -86,21 +87,14 @@ export default function Login() {
       password: password,
     };
     if (isValidForm) {
-      fetch("http://localhost:8080/login", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
-      }).then((response) => {
-        if (response.status === 200) {
+      authenticateUser(user)
+        .then(() => {
           setIsValidCredential(true);
           navigate("/");
-        } else if (response.status === 404 || response.status === 401) {
+        })
+        .catch(() => {
           setIsValidCredential(false);
-        }
-      });
+        });
     }
     event.preventDefault();
   };

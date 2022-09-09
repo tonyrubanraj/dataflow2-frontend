@@ -6,10 +6,10 @@ import Signup from "./pages/signup/signup";
 import Connection from "./pages/connection/connection";
 import Job from "./pages/job/job";
 import JobList from "./pages/jobList/jobList";
-import ProtectedRoute from "./ProtectedRoute";
 import Header from "./components/header/header";
-import PrivateRoute from "./PrivateRoute";
 import React from "react";
+import ProtectedRoute from "./components/protectedRoute/ProtectedRoute";
+import PrivateRoute from "./components/privateRoute/PrivateRoute";
 
 function App() {
   return (
