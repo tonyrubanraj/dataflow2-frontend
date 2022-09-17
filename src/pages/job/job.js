@@ -28,7 +28,8 @@ import {
 const theme = createTheme();
 
 export default function Job() {
-  const [connectionId, setConnectionId] = useState(-1);
+  const [sourceConnectionId, setSourceConnectionId] = useState(-1);
+  const [destinationConnectionId, setDestinationConnectionId] = useState(-1);
   const [sourceSchema, setSourceSchema] = useState("");
   const [destinationSchema, setDestinationSchema] = useState("");
   const [connections, setConnections] = useState([]);
@@ -53,7 +54,8 @@ export default function Job() {
   const [formStatus, setFormStatus] = useState(0);
 
   const [errors, setErrors] = useState({
-    connectionId: "",
+    sourceConnectionId: "",
+    destinationConnectionId: "",
     sourceSchema: "",
     destinationSchema: "",
     sourceTables: "",
@@ -94,58 +96,110 @@ export default function Job() {
   }, []);
 
   useEffect(() => {
-    getSourceSchemas(connectionId)
+    getSourceSchemas(sourceConnectionId)
       .then((response) => {
         setSourceSchemas(response.data);
       })
       .catch(() => {
         setSourceSchemas([]);
       });
-    getDestinationSchemas(connectionId)
+  }, [sourceConnectionId]);
+
+  useEffect(() => {
+    getDestinationSchemas(destinationConnectionId)
       .then((response) => {
         setDestinationSchemas(response.data);
       })
       .catch(() => {
         setDestinationSchemas([]);
       });
-  }, [connectionId]);
+  }, [destinationConnectionId]);
 
   useEffect(() => {
-    getSourceTables(connectionId, sourceSchema)
+    getSourceTables(sourceConnectionId, sourceSchema)
       .then((response) => {
         setSourceTablesList(response.data);
       })
       .catch(() => {
         setSourceTablesList([]);
       });
-    getDestinationTables(connectionId, destinationSchema)
+  }, [sourceConnectionId, sourceSchema]);
+
+  useEffect(() => {
+    getDestinationTables(destinationConnectionId, destinationSchema)
       .then((response) => {
         setDestinationTablesList(response.data);
       })
       .catch(() => {
         setDestinationTablesList([]);
       });
-  }, [connectionId, sourceSchema, destinationSchema]);
+  }, [destinationConnectionId, destinationSchema]);
+
+  useEffect(() => {
+    setFormStatus(0);
+    let flag = false;
+    if (
+      parseInt(sourceConnectionId) !== -1 &&
+      parseInt(destinationConnectionId) !== -1 &&
+      sourceSchema &&
+      destinationSchema &&
+      isValidTable(sourceTables) &&
+      isValidTable(destinationTables) &&
+      jobType
+    ) {
+      flag = true;
+      for (let key in errors) {
+        if (errors[key] !== "") {
+          flag = false;
+          break;
+        }
+      }
+    }
+    setIsValidForm(flag);
+  }, [
+    errors,
+    sourceConnectionId,
+    destinationConnectionId,
+    destinationSchema,
+    destinationTables,
+    jobType,
+    sourceSchema,
+    sourceTables,
+  ]);
 
   const validateJobForm = (field, value) => {
     switch (field) {
-      case "connectionId": {
+      case "sourceConnectionId": {
         if (parseInt(value) === -1) {
           setErrors({
             ...errors,
-            connectionId: "Connection name cannot be empty",
+            sourceConnectionId: "Connection name cannot be empty",
             sourceSchema: "",
-            destinationSchema: "",
             sourceTables: "",
+          });
+        } else {
+          setErrors({
+            ...errors,
+            sourceConnectionId: "",
+            sourceSchema: "",
+            sourceTables: "",
+          });
+        }
+        break;
+      }
+      case "destinationConnectionId": {
+        if (parseInt(value) === -1) {
+          setErrors({
+            ...errors,
+            destinationConnectionId: "Connection name cannot be empty",
+            destinationSchema: "",
             destinationTables: "",
           });
         } else {
           setErrors({
             ...errors,
-            connectionId: "",
-            sourceSchema: "",
+            destinationConnectionId: "",
             destinationSchema: "",
-            sourceTables: "",
             destinationTables: "",
           });
         }
@@ -239,49 +293,19 @@ export default function Job() {
     return true;
   };
 
-  useEffect(() => {
-    setFormStatus(0);
-    let flag = true;
-    if (
-      parseInt(connectionId) !== -1 &&
-      sourceSchema &&
-      destinationSchema &&
-      isValidTable(sourceTables) &&
-      isValidTable(destinationTables) &&
-      jobType
-    ) {
-      for (let key in errors) {
-        if (errors[key] !== "") {
-          flag = false;
-          break;
-        }
-      }
-      setIsValidForm(flag);
-    } else {
-      setIsValidForm(false);
-    }
-  }, [
-    errors,
-    connectionId,
-    destinationSchema,
-    destinationTables,
-    jobType,
-    sourceSchema,
-    sourceTables,
-  ]);
-
   const handleSubmit = (e) => {
     const job_settings = {
-      connectionId: connectionId,
-      sourceSchema: sourceSchema,
-      destinationSchema: destinationSchema,
+      sourceId: sourceConnectionId,
+      destinationId: destinationConnectionId,
+      sourceSchema,
+      destinationSchema,
       sourceTables: sourceTables.map((table) => table.value),
       destinationTables: destinationTables.map((table) => table.value),
-      jobType: jobType,
+      jobType,
     };
     if (isValidForm) {
       migrate(job_settings)
-        .then((response) => {
+        .then(() => {
           setFormStatus(1);
         })
         .catch(() => {
@@ -316,41 +340,8 @@ export default function Job() {
               component="form"
               noValidate={false}
               onSubmit={handleSubmit}
-              sx={{ mt: 3, width: "100%" }}
+              sx={{ mt: 4, width: "100%" }}
             >
-              <FormControl
-                fullWidth
-                error={errors.connectionId ? true : false}
-                sx={{ my: 2 }}
-              >
-                <InputLabel id="connectionId">
-                  Choose the Connection setting
-                </InputLabel>
-                <Select
-                  labelId="connectionId"
-                  id="connectionId"
-                  fullWidth
-                  value={connectionId}
-                  label="Choose the Connection setting"
-                  onChange={(e) => {
-                    validateJobForm("connectionId", e.target.value);
-                    setSourceSchema("");
-                    setDestinationSchema("");
-                    setConnectionId(e.target.value);
-                  }}
-                >
-                  <MenuItem value="-1" selected>
-                    --Select--
-                  </MenuItem>
-                  {connections.map(({ name, id }) => {
-                    return (
-                      <MenuItem key={id} value={id}>
-                        {name}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              </FormControl>
               <Grid item xs={12} sm={12} md={12}>
                 <Box
                   sx={{
@@ -361,6 +352,41 @@ export default function Job() {
                   }}
                 >
                   <Grid item xs={12} sm={5.5} md={5.5}>
+                    <Typography component="h1" variant="h5">
+                      Source
+                    </Typography>
+                    <FormControl
+                      fullWidth
+                      error={errors.sourceConnectionId ? true : false}
+                      sx={{ mt: 3, mb: 1 }}
+                    >
+                      <InputLabel id="sourceConnectionId">
+                        Choose the Connection setting
+                      </InputLabel>
+                      <Select
+                        labelId="sourceConnectionId"
+                        id="sourceConnectionId"
+                        fullWidth
+                        value={sourceConnectionId}
+                        label="Choose the Connection setting"
+                        onChange={(e) => {
+                          validateJobForm("sourceConnectionId", e.target.value);
+                          setSourceSchema("");
+                          setSourceConnectionId(e.target.value);
+                        }}
+                      >
+                        <MenuItem value="-1" selected>
+                          --Select--
+                        </MenuItem>
+                        {connections.map(({ name, id }) => {
+                          return (
+                            <MenuItem key={id} value={id}>
+                              {name}
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                    </FormControl>
                     <FormControl
                       fullWidth
                       error={errors.sourceSchema ? true : false}
@@ -393,6 +419,44 @@ export default function Job() {
                   </Grid>
 
                   <Grid item xs={12} sm={5.5} md={5.5}>
+                    <Typography component="h1" variant="h5">
+                      Destination
+                    </Typography>
+                    <FormControl
+                      fullWidth
+                      error={errors.destinationConnectionId ? true : false}
+                      sx={{ mt: 3, mb: 1 }}
+                    >
+                      <InputLabel id="destinationConnectionId">
+                        Choose the Connection setting
+                      </InputLabel>
+                      <Select
+                        labelId="destinationConnectionId"
+                        id="destinationConnectionId"
+                        fullWidth
+                        value={destinationConnectionId}
+                        label="Choose the Connection setting"
+                        onChange={(e) => {
+                          validateJobForm(
+                            "destinationConnectionId",
+                            e.target.value
+                          );
+                          setDestinationSchema("");
+                          setDestinationConnectionId(e.target.value);
+                        }}
+                      >
+                        <MenuItem value="-1" selected>
+                          --Select--
+                        </MenuItem>
+                        {connections.map(({ name, id }) => {
+                          return (
+                            <MenuItem key={id} value={id}>
+                              {name}
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                    </FormControl>
                     <FormControl
                       fullWidth
                       error={errors.destinationSchema ? true : false}

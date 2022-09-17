@@ -13,7 +13,8 @@ import { visuallyHidden } from "@mui/utils";
 
 function fetchRecords({
   id,
-  connectionName,
+  sourceConnectionName,
+  destinationConnectionName,
   type,
   status,
   createdTime,
@@ -21,7 +22,8 @@ function fetchRecords({
 }) {
   return {
     id,
-    connectionName,
+    sourceConnectionName,
+    destinationConnectionName,
     type,
     status,
     createdTime,
@@ -60,10 +62,16 @@ const headCells = [
     label: "Id",
   },
   {
-    id: "connectionName",
+    id: "sourceConnectionName",
     numeric: false,
     disablePadding: false,
-    label: "Connection",
+    label: "Source Connection",
+  },
+  {
+    id: "destinationConnectionName",
+    numeric: false,
+    disablePadding: false,
+    label: "Destination Connection",
   },
   {
     id: "type",
@@ -165,7 +173,12 @@ export default function EnhancedTable(props) {
                   return (
                     <TableRow hover tabIndex={-1} key={row.id}>
                       <TableCell align="left">{row.id}</TableCell>
-                      <TableCell align="left">{row.connectionName}</TableCell>
+                      <TableCell align="left">
+                        {row.sourceConnectionName}
+                      </TableCell>
+                      <TableCell align="left">
+                        {row.destinationConnectionName}
+                      </TableCell>
                       <TableCell align="left">{row.type}</TableCell>
                       <TableCell align="left">{row.status}</TableCell>
                       <TableCell align="left">{row.createdTime}</TableCell>

@@ -8,7 +8,7 @@ const getConnections = () => {
 };
 
 const getSourceSchemas = (connectionId) => {
-  return axios.get(JobApis.GET_SOURCE_SCHEMAS, {
+  return axios.get(JobApis.GET_SCHEMAS, {
     withCredentials: true,
     params: {
       connectionId: connectionId,
@@ -17,7 +17,7 @@ const getSourceSchemas = (connectionId) => {
 };
 
 const getDestinationSchemas = (connectionId) => {
-  return axios.get(JobApis.GET_DESTINATION_SCHEMAS, {
+  return axios.get(JobApis.GET_SCHEMAS, {
     withCredentials: true,
     params: {
       connectionId: connectionId,
@@ -26,7 +26,7 @@ const getDestinationSchemas = (connectionId) => {
 };
 
 const getSourceTables = (connectionId, sourceSchema) => {
-  return axios.get(JobApis.GET_SOURCE_TABLES, {
+  return axios.get(JobApis.GET_TABLES, {
     withCredentials: true,
     params: {
       connectionId: connectionId,
@@ -36,7 +36,7 @@ const getSourceTables = (connectionId, sourceSchema) => {
 };
 
 const getDestinationTables = (connectionId, destinationSchema) => {
-  return axios.get(JobApis.GET_DESTINATION_TABLES, {
+  return axios.get(JobApis.GET_TABLES, {
     withCredentials: true,
     params: {
       connectionId: connectionId,
